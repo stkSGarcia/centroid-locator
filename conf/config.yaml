@@ -1,0 +1,4 @@
+workspace:
+  root: out
+  log: logs
+  store: dxf
