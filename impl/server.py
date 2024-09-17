@@ -42,3 +42,9 @@ def weldingInfo():
     dictionary = [{"name":"电流","data":"188"},{"name":"电压","data":"10.1"},{"name":"焊接速度","data":"300"},{"name":"焊接距离","data":"11.6"}]
     response = dictionary
     return response
+
+@app.route("/uploadCAD", methods=["POST"])
+def upload_file():
+    file = request.files["file"]
+    file.save(os.path.join('/Users/jocelyn/Downloads/cad_lib',file.filename))
+    return file.filename

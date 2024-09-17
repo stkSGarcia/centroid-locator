@@ -23,7 +23,7 @@ Path: /parse
 Method: GET, POST
 Form: file=File
 Response: JSON
-
+--------------------
 Path: /locate
 Method: GET, POST
 Form:   file=File
@@ -31,4 +31,15 @@ Form:   file=File
         min_radius=int
         max_radius=int
 Response: JSON
+--------------------
+Path: /weldingInfo
+Method: GET
+Form: 
+Response: JSON
+--------------------
+Path: /uploadCAD
+Method: POST
+Form: file=File
+Response: String
+
 ```
