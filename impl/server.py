@@ -7,6 +7,7 @@ from flask_cors import CORS
 from impl.config import CONFIG
 from impl.locator import locator
 from impl.parser import parse
+from impl.user import user
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
@@ -15,6 +16,7 @@ headers = {
     'Access-Control-Allow-Origin': 'http://localhost:3000'
 }
 
+app.register_blueprint(user)
 
 @app.route("/parse", methods=["GET", "POST"])
 def parse_dxf():
