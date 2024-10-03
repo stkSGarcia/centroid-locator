@@ -1,0 +1,2 @@
+database:
+  sqlite: conf/dev.db

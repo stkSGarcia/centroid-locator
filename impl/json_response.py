@@ -1,5 +1,4 @@
-
-class JsonResponse(object):
+class JsonResponse:
     """
     统一的json返回格式
     """
@@ -10,11 +9,11 @@ class JsonResponse(object):
         self.msg = msg
 
     @classmethod
-    def success(cls, data=None, code=0, msg='success'):
+    def success(cls, data=None, code=0, msg="success"):
         return cls(data, code, msg)
 
     @classmethod
-    def error(cls, data=None, code=-1, msg='error'):
+    def error(cls, data=None, code=-1, msg="error"):
         return cls(data, code, msg)
 
     def to_dict(self):
@@ -23,4 +22,3 @@ class JsonResponse(object):
             "msg": self.msg,
             "data": self.data
         }
-

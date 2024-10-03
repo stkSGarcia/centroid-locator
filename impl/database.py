@@ -1,52 +1,49 @@
+import logging
+import sqlite3
+
 import pymysql
-import os
 
-_connection = None
+from impl.config import CONFIG
 
-def init_connection(config):
-    # 1. 链接数据库， 得到一个对象
-    global _connection
-    try:
-        _connection = pymysql.connect(host=config["host"],
-                                      port=config["port"],
-                                      user=config["user"],
-                                      password=config["password"],
-                                      database=config["database"],
-                                      charset="utf8")
-    # except Ellipsis as e:
-    except Exception as e:
-        print(e)
-        os._exit(0)   # 如果第一步的链接失败，下面的所有代码都不用走，直接退出
-
-def queryall(sql):
-    """负责查询功能"""
-    with _connection.cursor() as cursor:
-        #3 执行SQL语句
-        cursor.execute(sql)
-        #4.获取查询结果
-        result = cursor.fetchall()
-    return result    #将结果返回
+logger = logging.getLogger(__name__)
 
 
-def queryone(sql):
-    """负责查询功能"""
-    with _connection.cursor() as cursor:
-        #3 执行SQL语句
-        cursor.execute(sql)
-        #4.获取查询结果
-        result = cursor.fetchone()
-    return result    #将结果返回
+class Database:
+    def __init__(self):
+        config = CONFIG["database"]
+        if config["sqlite"]:
+            self._connection = sqlite3.connect(config["sqlite"])
+        else:
+            for _ in range(config["retry"]):
+                try:
+                    self._connection = pymysql.connect(host=config["host"],
+                                                       port=config["port"],
+                                                       user=config["user"],
+                                                       password=config["password"],
+                                                       database=config["database"],
+                                                       charset="utf8")
+                    break
+                except Exception as e:
+                    logger.error(f"Cannot connect to database: {e}.")
 
-def update(sql):
-    """负责更行功能"""
-    with _connection.cursor() as cursor:
-    # 3 利用游标对象执行SQL语句
-        cursor.execute(sql)
-    
-    #4.提交 如果不进行提交，所有的改变(insert, delete, update)不会生效
-    _connection.commit()
-    print("更新成功！")
+    def queryall(self, sql):
+        """负责查询功能"""
+        with self._connection.cursor() as cursor:
+            cursor.execute(sql)  # 执行SQL语句
+            return cursor.fetchall()  # 获取查询结果, 将结果返回
 
-def close_database():
-    _connection.close()
+    def queryone(self, sql):
+        """负责查询功能"""
+        with self._connection.cursor() as cursor:
+            cursor.execute(sql)  # 执行SQL语句
+            return cursor.fetchone()  # 获取查询结果, 将结果返回
 
+    def update(self, sql):
+        """负责更行功能"""
+        with self._connection.cursor() as cursor:
+            cursor.execute(sql)  # 利用游标对象执行SQL语句
+        self._connection.commit()  # 提交 如果不进行提交，所有的改变(insert, delete, update)不会生效
+        logger.info("更新成功！")
+
+    def __del__(self):
+        self._connection.close()
