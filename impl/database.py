@@ -18,13 +18,23 @@ def init_connection(config):
         print(e)
         os._exit(0)   # 如果第一步的链接失败，下面的所有代码都不用走，直接退出
 
-def query(sql):
+def queryall(sql):
     """负责查询功能"""
     with _connection.cursor() as cursor:
         #3 执行SQL语句
         cursor.execute(sql)
         #4.获取查询结果
         result = cursor.fetchall()
+    return result    #将结果返回
+
+
+def queryone(sql):
+    """负责查询功能"""
+    with _connection.cursor() as cursor:
+        #3 执行SQL语句
+        cursor.execute(sql)
+        #4.获取查询结果
+        result = cursor.fetchone()
     return result    #将结果返回
 
 def update(sql):
