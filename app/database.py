@@ -3,7 +3,7 @@ import sqlite3
 
 import pymysql
 
-from impl.config import CONFIG
+from app.config import CONFIG
 
 logger = logging.getLogger(__name__)
 

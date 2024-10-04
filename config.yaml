@@ -1,2 +1,2 @@
 database:
-  sqlite: conf/dev.db
+  sqlite: /mnt/c/Users/sgu2/Downloads/dev.db

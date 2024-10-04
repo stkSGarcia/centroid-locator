@@ -1,7 +1,8 @@
-from impl.database import Database
+from app.database import Database
+
 
 class UserDao:
-    def login(self,username,passwd):
+    def login(self, username, passwd):
         with Database() as db:
             result = db.queryone(f"select name, passwd from users where username={username} and is_delete=0")
         if result is None:

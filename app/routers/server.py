@@ -1,26 +1,22 @@
 import logging
 import os
 
-from flask import Flask, request
-from flask_cors import CORS
+from fastapi import APIRouter
 
-from impl.config import CONFIG
-from impl.locator import locator
-from impl.parser import parse
-from impl.user import user
+from app.config import CONFIG
+from app.locator import locator
+from app.parser import parse
 
 logger = logging.getLogger(__name__)
-app = Flask(__name__)
-CORS(app, resources=r"/*")
-headers = {
-    "Access-Control-Allow-Origin": "http://localhost:3000"
-}
 
-app.register_blueprint(user)
+router = APIRouter(
+    prefix="/server",
+    tags=["server"],
+)
 
 
-@app.route("/parse", methods=["GET", "POST"])
-def parse_dxf():
+@router.post("/parse")
+async def parse_dxf():
     file = request.files["file"]
     path = os.path.join(CONFIG["workspace"]["store"], file.filename)
     file.save(path)
@@ -29,8 +25,8 @@ def parse_dxf():
     return [e.get_json() for e in response]
 
 
-@app.route("/locate", methods=["GET", "POST"])
-def locate():
+@router.post("/locate")
+async def locate():
     file = request.files["file"]
     path = os.path.join(CONFIG["workspace"]["store"], file.filename)
     file.save(path)
@@ -41,16 +37,16 @@ def locate():
     return response
 
 
-@app.route("/weldingInfo", methods=["GET"])
-def welding_info():
+@router.get("/weldingInfo")
+async def welding_info():
     dictionary = [{"name": "电流", "data": "188"}, {"name": "电压", "data": "10.1"},
                   {"name": "焊接速度", "data": "300"}, {"name": "焊接距离", "data": "11.6"}]
     response = dictionary
     return response
 
 
-@app.route("/uploadCAD", methods=["POST"])
-def upload_file():
+@router.post("/uploadCAD")
+async def upload_file():
     file = request.files["file"]
     file.save(os.path.join("/Users/jocelyn/Downloads/cad_lib", file.filename))
     return file.filename
