@@ -16,7 +16,7 @@ router = APIRouter(
 
 class LoginData(BaseModel):
     username: str
-    passwd: str
+    password: str
 
 
 class RegisterData(BaseModel):
@@ -33,7 +33,7 @@ class UserResponse(BaseModel):
 
 @router.post("/login")
 async def login(data: Annotated[LoginData, Form()]) -> UserResponse:
-    code, name = user_dao.login(username=data.username, passwd=data.passwd)
+    code, name = user_dao.login(username=data.username, password=data.password)
     if code == 1:
         return UserResponse(code=0, data={"username": data.username, "name": name})
     elif code == 0:
@@ -44,5 +44,5 @@ async def login(data: Annotated[LoginData, Form()]) -> UserResponse:
 
 @router.post("/register")
 async def register(data: Annotated[RegisterData, Form()]) -> UserResponse:
-    is_successful = user_dao.register(username=data.username, name=data.name, passwd=data.password)
+    is_successful = user_dao.register(username=data.username, name=data.name, password=data.password)
     return UserResponse(code=1) if is_successful else UserResponse(code=0)

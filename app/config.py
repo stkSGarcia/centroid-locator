@@ -69,4 +69,4 @@ def init_config():
 
     # Initialize database.
     global ENGINE
-    ENGINE = create_engine(CONFIG["database"]["url"], echo=True)
+    ENGINE = create_engine(CONFIG["database"]["url"])
