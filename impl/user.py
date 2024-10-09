@@ -9,11 +9,11 @@ user = Blueprint('user',__name__)
 
 @user.route('/user/login', methods=["POST"])
 def login():
-    params = request.json
-    username = params.get("username")
-    passwd = params.get("passwd")
+    username = request.form.get("username")
+    password = request.form.get("password")
+    print(username +" "+password)
     userDao = UserDao()
-    name = userDao.login(username,passwd)
+    name = userDao.login(username,password)
     if name == None:
         return JsonResponse.success(msg="当前用户不存在！").to_dict()
     if name == "-1":
