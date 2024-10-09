@@ -1,7 +1,8 @@
 import logging
 import os
+from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, File, UploadFile, Form
 
 from app.config import CONFIG
 from app.locator import locator
@@ -16,23 +17,24 @@ router = APIRouter(
 
 
 @router.post("/parse")
-async def parse_dxf():
-    file = request.files["file"]
-    path = os.path.join(CONFIG["workspace"]["store"], file.filename)
-    file.save(path)
+async def parse_dxf(file: UploadFile):
     logger.info(f"File received: {file.filename}.")
+    path = os.path.join(CONFIG["workspace"]["store"], file.filename)
+    with open(path, "wb") as f:
+        f.write(file.file.read())
     response = parse(path)
     return [e.get_json() for e in response]
 
 
 @router.post("/locate")
-async def locate():
-    file = request.files["file"]
+async def locate(file: Annotated[UploadFile, File()],
+                 dist: Annotated[int, Form()],
+                 min_radius: Annotated[int, Form()],
+                 max_radius: Annotated[int, Form()]):
+    logger.info(f"File received: {file.filename}.")
     path = os.path.join(CONFIG["workspace"]["store"], file.filename)
-    file.save(path)
-    dist = int(request.form["dist"])
-    min_radius = int(request.form["min_radius"])
-    max_radius = int(request.form["max_radius"])
+    with open(path, "wb") as f:
+        f.write(file.file.read())
     response = locator(path, dist, min_radius, max_radius)  # 90, (30, 60)
     return response
 
@@ -46,7 +48,7 @@ async def welding_info():
 
 
 @router.post("/uploadCAD")
-async def upload_file():
-    file = request.files["file"]
-    file.save(os.path.join("/Users/jocelyn/Downloads/cad_lib", file.filename))
+async def upload_file(file: UploadFile):
+    with open(os.path.join("/Users/jocelyn/Downloads/cad_lib", file.filename), "wb") as f:
+        f.write(file.file.read())
     return file.filename

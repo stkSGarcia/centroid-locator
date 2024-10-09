@@ -1,10 +1,10 @@
 import logging
+from typing import Optional
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.dao.user import UserDao
-from app.json_response import JsonResponse
+from app.dao import user as user_dao
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +19,18 @@ class User(BaseModel):
     passwd: str
 
 
+class LoginResponse(BaseModel):
+    code: int
+    data: Optional[dict] = None
+    msg: Optional[str] = None
+
+
 @router.post("/login")
-async def login(user: User):
-    name = UserDao().login(user.username, user.passwd)
-    if name is None:
-        return JsonResponse.success(msg="当前用户不存在！").to_dict()
-    if name == "-1":
-        return JsonResponse.success(msg="密码错误！").to_dict()
+async def login(user: User) -> LoginResponse:
+    code, name = user_dao.login(user.username, user.passwd)
+    if code == 1:
+        return LoginResponse(code=0, data={"username": user.username, "name": name})
+    elif code == 0:
+        return LoginResponse(code=0, msg="密码错误！")
     else:
-        return JsonResponse.success(data={'username': user.username, 'name': name}).to_dict()
+        return LoginResponse(code=0, msg="当前用户不存在！")

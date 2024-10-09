@@ -4,10 +4,5 @@ workspace:
   store: dxf
 
 database:
-  sqlite: null
-  host: 127.0.0.1
-  port: 3306
-  user: jocelyn
-  password: "123456"
-  database: welding
+  url: "mysql+pymysql://jocelyn:123456@127.0.0.1:3306/welding"
   retry: 3

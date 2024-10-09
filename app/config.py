@@ -3,9 +3,11 @@ import logging.config
 import os
 
 import yaml
+from sqlmodel import create_engine
 
 logger = logging.getLogger(__name__)
 CONFIG = {}
+ENGINE = None
 
 
 def load_yaml(path):
@@ -64,3 +66,7 @@ def init_config():
         logging.config.dictConfig(log_config)
     else:
         logger.warning("Cannot find log configuration file.")
+
+    # Initialize database.
+    global ENGINE
+    ENGINE = create_engine(CONFIG["database"]["url"], echo=True)

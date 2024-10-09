@@ -13,33 +13,9 @@ pip install -r requirements.txt
 
 ```shell
 source .venv/bin/activate
-flask --app impl/server run [--debug]
+fastapi dev app/main.py
 ```
 
 ## APIs
 
-```text
-Path: /parse
-Method: GET, POST
-Form: file=File
-Response: JSON
---------------------
-Path: /locate
-Method: GET, POST
-Form:   file=File
-        dist=int
-        min_radius=int
-        max_radius=int
-Response: JSON
---------------------
-Path: /weldingInfo
-Method: GET
-Form: 
-Response: JSON
---------------------
-Path: /uploadCAD
-Method: POST
-Form: file=File
-Response: String
-
-```
+[API docs](http://127.0.0.1:8000/docs)
