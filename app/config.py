@@ -1,11 +1,13 @@
 import collections
 import logging.config
 import os
+
 import yaml
-from impl import database
+from sqlmodel import create_engine
 
 logger = logging.getLogger(__name__)
 CONFIG = {}
+ENGINE = None
 
 
 def load_yaml(path):
@@ -35,7 +37,6 @@ def init_config():
     default_config_base = "conf"
     config_name = "config.yaml"
     log_config_name = "log.yaml"
-    connection_config_name = "connection.yaml"
 
     # General configurations.
     global CONFIG
@@ -66,20 +67,6 @@ def init_config():
     else:
         logger.warning("Cannot find log configuration file.")
 
-    # Database configurations.
-    mysql_config_path = os.path.join(default_config_base, connection_config_name)
-    if os.path.isfile(mysql_config_path):
-        mysql_config = load_yaml(mysql_config_path)
-    else:
-        raise ValueError("Cannot find MySQL configuration file.")
-    CONFIG["connection"] = {
-        "host": mysql_config["host"],
-        "port": mysql_config["port"],
-        "user": mysql_config["user"],
-        "password": mysql_config["password"],
-        "database": mysql_config["database"]
-    }
-    logger.info("Database configuration file has been loaded.")
-
-    # Initialize database connection.
-    database.init_connection(CONFIG["connection"])
+    # Initialize database.
+    global ENGINE
+    ENGINE = create_engine(CONFIG["database"]["url"])

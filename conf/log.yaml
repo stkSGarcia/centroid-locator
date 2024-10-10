@@ -14,7 +14,7 @@ handlers:
     when: D
     interval: 1
 loggers:
-  impl:
+  app:
     level: INFO
     handlers: [ console,file ]
     propagate: no

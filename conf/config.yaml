@@ -2,3 +2,7 @@ workspace:
   root: out
   log: logs
   store: dxf
+
+database:
+  url: "mysql+pymysql://jocelyn:123456@127.0.0.1:3306/welding"
+  retry: 3
