@@ -44,5 +44,7 @@ async def login(data: Annotated[LoginData, Form()]) -> UserResponse:
 
 @router.post("/register")
 async def register(data: Annotated[RegisterData, Form()]) -> UserResponse:
-    is_successful = user_dao.register(username=data.username, name=data.name, password=data.password)
-    return UserResponse(code=1) if is_successful else UserResponse(code=0)
+    is_successful = user_dao.register(
+        username=data.username, name=data.name, password=data.password
+    )
+    return UserResponse(code=0) if is_successful else UserResponse(code=1)
