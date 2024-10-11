@@ -6,6 +6,7 @@ from app.config import ENGINE
 
 
 class User(SQLModel, table=True):
+    __tablename__ = "users"
     username: Optional[str] = Field(default=None, primary_key=True)
     name: str
     password: str
@@ -18,7 +19,9 @@ def init_table():
 
 def login(username, password) -> (int, str):
     with Session(ENGINE) as session:
-        statement = select(User).where(User.username == username).where(User.is_delete == 0)
+        statement = (
+            select(User).where(User.username == username).where(User.is_delete == 0)
+        )
         user = session.exec(statement).first()
         if user is None:
             return -1, None
