@@ -33,14 +33,16 @@ class UserResponse(BaseModel):
 
 @router.post("/login")
 async def login(data: Annotated[LoginData, Form()]) -> UserResponse:
-    code, name = user_dao.login(username=data.username, password=data.password)
-    if code == 1:
-        return UserResponse(code=0, data={"username": data.username, "name": name})
-    elif code == 0:
-        return UserResponse(code=0, msg="密码错误！")
-    else:
-        return UserResponse(code=0, msg="当前用户不存在！")
-
+    try:
+        code, name = user_dao.login(username=data.username, password=data.password)
+        if code == 1:
+            return UserResponse(code=0, data={"username": data.username, "name": name})
+        elif code == 0:
+            return UserResponse(code=0, msg="密码错误！")
+        else:
+            return UserResponse(code=0, msg="当前用户不存在！")
+    except Exception as e:
+        print(repr(e))
 
 @router.post("/register")
 async def register(data: Annotated[RegisterData, Form()]) -> UserResponse:
