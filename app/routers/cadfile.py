@@ -2,7 +2,8 @@ import logging
 import os
 from typing import Optional, Annotated
 
-from fastapi import APIRouter, Form, UploadFile
+from fastapi import APIRouter, Form, UploadFile, Header
+from flask import Request
 from pydantic import BaseModel
 
 from app.dao import cadfile as cadfile_dao
@@ -22,9 +23,9 @@ class ListData(BaseModel):
 
 
 class AddCADData(BaseModel):
-    name: str
+    # name: str
     description: str
-    username: str
+    # username: str
     file: UploadFile
 
 
@@ -44,7 +45,7 @@ async def login(data: Annotated[ListData, Form()]) -> CADResponse:
 
 
 @router.post("/addcad")
-async def register(data: Annotated[AddCADData, Form()]) -> CADResponse:
+async def register(data: Annotated[AddCADData, Form()], username: Optional[str] = Header((None))) -> CADResponse:
     location = "/Users/jocelyn/Downloads/cad_lib"
     with open(
         os.path.join(location, data.file.filename), "wb"
@@ -53,7 +54,7 @@ async def register(data: Annotated[AddCADData, Form()]) -> CADResponse:
         f.write(filedata)
 
     is_successful = cadfile_dao.add(
-        name=data.name, description=data.description, username=data.username,location=location+data.file.filename
+        name=data.file.filename, description=data.description, username=username,location=location+data.file.filename
     )
 
     return CADResponse(code=0) if is_successful else CADResponse(code=1)
